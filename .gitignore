@@ -2,3 +2,5 @@
 .ipynb_checkpoints/
 .idea/
 venv/
+.DS_Store
+GTZAN_Dataset/genres_original/.DS_Store
