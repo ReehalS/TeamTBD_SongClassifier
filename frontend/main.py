@@ -54,8 +54,8 @@ if uploaded_file is not None:
         y, sr = librosa.load(temp_file_path)
         
         # Load the trained model and label encoder
-        xgb_loaded = joblib.load('frontend/25pModel/xgb_model_50000_0_005_25p.pkl')
-        le_loaded = joblib.load('frontend/25pModel/label_encoder_25p.pkl')
+        xgb_loaded = joblib.load('frontend/25p_4000_0_01_Model/xgb_model_4000_0_01_25p.pkl')
+        le_loaded = joblib.load('frontend/25p_4000_0_01_Model/label_encoder_4000_0_01_25p.pkl')
 
         # Segment the audio into 3-second clips and make predictions on each
         segment_duration = 3  # seconds
