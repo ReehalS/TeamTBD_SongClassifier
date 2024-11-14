@@ -4,12 +4,12 @@ import librosa
 import numpy as np
 import tempfile
 import os
+import joblib
+from collections import Counter
 
-# function to extract audio features
-def extract_features(file_path):
-    y, sr = librosa.load(file_path)
+# Function to extract features from a 3-second audio segment
+def extract_features(y, sr):
     features = {
-        "length": librosa.get_duration(y=y, sr=sr),
         "chroma_stft_mean": np.mean(librosa.feature.chroma_stft(y=y, sr=sr)),
         "chroma_stft_var": np.var(librosa.feature.chroma_stft(y=y, sr=sr)),
         "rms_mean": np.mean(librosa.feature.rms(y=y)),
@@ -39,26 +39,51 @@ def extract_features(file_path):
 
 st.title("Team _TBD_", anchor=False)
 st.header("Song Genre Classifier :musical_note:", False)
-st.subheader("Enter a .mp3 file: ", False)
+st.subheader("Enter an audio file (.mp3 or .wav):", False)
 
-uploaded_file = st.file_uploader("Choose a file", type=["mp3"])
+uploaded_file = st.file_uploader("Choose a file", type=["mp3", "wav"])
 
 if uploaded_file is not None:
     # Save the uploaded file temporarily
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3" if uploaded_file.name.endswith('.mp3') else ".wav") as temp_file:
         temp_file.write(uploaded_file.read())
         temp_file_path = temp_file.name
-    
-    # Extract features from the MP3 file
+
     try:
-        features = extract_features(temp_file_path)
-        # Display the features in a table
-        st.write("Extracted Features:")
-        st.write(pd.DataFrame([features]))
+        # Load the entire audio file
+        y, sr = librosa.load(temp_file_path)
+        
+        # Load the trained model and label encoder
+        xgb_loaded = joblib.load('./25pModel/xgb_model_50000_0_005_25p.pkl')
+        le_loaded = joblib.load('./25pModel/label_encoder_25p.pkl')
+
+        # Segment the audio into 3-second clips and make predictions on each
+        segment_duration = 3  # seconds
+        segment_samples = segment_duration * sr
+        genre_counts = []
+
+        for i in range(0, len(y), segment_samples):
+            y_segment = y[i:i+segment_samples]
+            if len(y_segment) == segment_samples:  # Ensure segment is exactly 3 seconds
+                features = extract_features(y_segment, sr)
+                features_df = pd.DataFrame([features])
+
+                # Predict genre for the segment and decode it to genre name
+                preds_encoded = xgb_loaded.predict(features_df)
+                preds_decoded = le_loaded.inverse_transform(preds_encoded)
+                genre_counts.append(preds_decoded[0])  # Store predicted genre
+
+        # Count occurrences of each genre and calculate confidence
+        genre_frequency = Counter(genre_counts)
+        total_segments = len(genre_counts)
+        genre_confidence = {genre: round((count / total_segments) * 100, 2) for genre, count in genre_frequency.items()}
+
+        # Display the results
+        st.write("Predicted Genre Confidence:")
+        st.write(pd.DataFrame.from_dict(genre_confidence, orient='index', columns=['Confidence (%)']))
+        
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
     finally:
         # Clean up temporary file
         os.remove(temp_file_path)
-
-    
