@@ -37,8 +37,9 @@ def extract_features(file_path):
     
     return features
 
-st.title("Song Genre Classifier")
-st.subheader("Enter a .mp3 file: ")
+st.title("Team _TBD_", anchor=False)
+st.header("Song Genre Classifier :musical_note:", False)
+st.subheader("Enter a .mp3 file: ", False)
 
 uploaded_file = st.file_uploader("Choose a file", type=["mp3"])
 
