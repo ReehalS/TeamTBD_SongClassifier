@@ -24,8 +24,8 @@ def extract_features(y, sr):
         "zero_crossing_rate_var": np.var(librosa.feature.zero_crossing_rate(y)),
         "harmony_mean": np.mean(librosa.effects.harmonic(y)),
         "harmony_var": np.var(librosa.effects.harmonic(y)),
-        "perceptr_mean": np.mean(librosa.effects.percussive(y)),
-        "perceptr_var": np.var(librosa.effects.percussive(y)),
+        "percussive_mean": np.mean(librosa.effects.percussive(y)),
+        "percussive_var": np.var(librosa.effects.percussive(y)),
         "tempo": librosa.beat.tempo(y=y, sr=sr)[0]
     }
     
