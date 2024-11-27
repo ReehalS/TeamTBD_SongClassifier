@@ -32,8 +32,9 @@ Despite achieving 82% accuracy with more estimators and a lower learning rate, t
 Future steps include performing hyperparameter tuning and optimization through grid search to determine the optimal values for estimators and learning rate.
 
 ## Demonstration
-Here is a short demonstration of our final model. You can also test it yourself at [songclassifiers.streamlit.app](https://songclassifiers.streamlit.app)
-[Watch the demonstration](https://drive.google.com/file/d/1AfBmu3aaE7BZtdE4oQyR1ppKb29zYipl/view?usp=sharing)
+Here is a short demonstration of our final model [Watch the demonstration](https://drive.google.com/file/d/1AfBmu3aaE7BZtdE4oQyR1ppKb29zYipl/view?usp=sharing). 
+You can also test it yourself at [songclassifiers.streamlit.app](https://songclassifiers.streamlit.app)
+
 
 ## License
 
